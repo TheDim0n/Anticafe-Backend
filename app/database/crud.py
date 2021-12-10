@@ -3,19 +3,20 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 
 
-def create_message(db: Session, new_message: schemas.MessageCreate):
-    db_message = models.Message(**new_message.dict())
-    db.add(db_message)
+def get_user_by_login(db: Session, login: str):
+    return db.query(models.User).filter(models.User.email == login).first()
+
+
+def create_user(db: Session, new_user: schemas.UserRegister):
+    new_user_db = models.User(**new_user.dict())
+    db.add(new_user_db)
     db.commit()
-    db.refresh(db_message)
+    db.refresh(new_user_db)
     return
 
 
-def get_messages(db: Session):
-    return db.query(models.Message).all()
-
-
-def delete_message_by_id(db: Session, id: int):
-    _ = db.query(models.Message).filter(models.Message.id == id).delete()
+def update_user_bu_id(db: Session, id: int, user_data: schemas.UserUpdate):
+    _ = db.query(models.User).filter(models.User.id == id)\
+        .update(user_data.dict())
     db.commit()
     return
