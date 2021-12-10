@@ -24,6 +24,7 @@ class Room(DataBase):
     cost = Column(Integer, nullable=False)
     start = Column(Integer, nullable=False)
     finish = Column(Integer, nullable=False)
+    image_id = Column(Integer, nullable=True)
 
 
 class Reservation(DataBase):
@@ -47,6 +48,13 @@ class Option(DataBase):
     id = Column(Integer, primary_key=True)
     cost = Column(Integer, nullable=False)
     name = Column(String(30), nullable=False)
+
+
+class RoomOption(DataBase):
+    __tablename__ = "room_option"
+
+    room_id = Column(Integer, ForeignKey("room.id"), primary_key=True)
+    option_id = Column(Integer, ForeignKey("option.id"), primary_key=True)
 
 
 class ReservationOption(DataBase):

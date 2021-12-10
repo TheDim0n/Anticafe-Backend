@@ -31,6 +31,38 @@ class User(UserData):
 # endregion
 
 
+# region Room
+class RoomData(BaseModel):
+    name: str
+    description: Optional[str]
+    cost: int
+    start: int
+    finish: int
+    image_id: Optional[int]
+
+
+class Room(RoomData):
+    id: int
+
+    class Config:
+        orm_mode = True
+# endregion
+
+
+# region Room
+class OptionData(BaseModel):
+    cost: int
+    name: str
+
+
+class Option(OptionData):
+    id: int
+
+    class Config:
+        orm_mode = True
+# endregion
+
+
 # region Token
 class Token(BaseModel):
     access_token: str
