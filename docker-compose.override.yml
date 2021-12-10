@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  backend:
+    build: .
+    command: bash -c "python migrate.py && python run.py"
+    environment:
+      DATABASE_URL: 'postgresql+psycopg2://postgres:password@database:5432/anticafe_db'
+      DEBUG: 1
+      SECRET_KEY: 'secret'
+      DEFAULT_ADMIN_LOGIN: admin
+      DEFAULT_ADMIN_PASSWORD: admin
+      ACCESS_TOKEN_EXPIRE_MINUTES: 60
+    depends_on:
+      - database
+    ports:
+      - 8000:8000
+  database:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: anticafe_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data: {}

@@ -1,4 +1,8 @@
-# FastAPI_Database_Template
-Template for FastAPI projects with database.
+# Anticafe-Backend
+Backend for Anticafe project.
 
-![example workflow](https://github.com/TheDim0n/FastAPI_Database_Template/actions/workflows/tests.yml/badge.svg)
+## Setup with Docker
+```
+docker-compose up --build
+```
+> Docs available at http://localhost:8000/docs or http://localhost:8000/redoc
