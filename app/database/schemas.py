@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 
 # region Users
@@ -31,17 +31,13 @@ class User(UserData):
 # endregion
 
 
-# region Room
-class RoomData(BaseModel):
-    name: str
-    description: Optional[str]
+# region Options
+class OptionData(BaseModel):
     cost: int
-    start: int
-    finish: int
-    image_id: Optional[int]
+    name: str
 
 
-class Room(RoomData):
+class Option(OptionData):
     id: int
 
     class Config:
@@ -50,12 +46,17 @@ class Room(RoomData):
 
 
 # region Room
-class OptionData(BaseModel):
-    cost: int
+class RoomData(BaseModel):
     name: str
+    description: Optional[str]
+    cost: int
+    start: int
+    finish: int
+    image_id: Optional[int]
+    options: Optional[List[Option]]
 
 
-class Option(OptionData):
+class Room(RoomData):
     id: int
 
     class Config:
