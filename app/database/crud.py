@@ -1,7 +1,9 @@
+from sqlalchemy import func as sql_func
 from sqlalchemy.orm import Session
 from typing import List
 
 from . import models, schemas
+from ..utils import files
 
 
 # region User
@@ -31,8 +33,10 @@ def read_rooms(db: Session):
 
 
 def create_room(db: Session, room_data: schemas.RoomData,
-                options: List[int] = []):
-    room_db = models.Room(**room_data.dict())
+                options: List[int] = [], id: int = None):
+    if not id:
+        id = db.query(sql_func.max(models.Room.id)).first()[0] + 1
+    room_db = models.Room(id=id, **room_data.dict())
     for option_id in options:
         option_db = db.query(models.Option)\
             .filter(models.Option.id == option_id).first()
@@ -68,7 +72,8 @@ def remove_room_options(db: Session, id: int, options: List[int]):
 
 # region Option
 def create_option(db: Session, option_data: schemas.OptionData):
-    option_db = models.Option(**option_data.dict())
+    id = db.query(sql_func.max(models.Option.id)).first()[0] + 1
+    option_db = models.Option(id=id, **option_data.dict())
     db.add(option_db)
     db.commit()
     db.refresh(option_db)
@@ -117,5 +122,27 @@ def create_resevation_for_room(db: Session,
     db.add(db_reservation)
     db.commit()
     db.refresh(db_reservation)
+    return
+# endregion
+
+
+# region InitData
+def load_init_data(db: Session):
+    options = files.json_loader("app/database/init_data/options.json")
+    for option in options:
+        option_db = db.query(models.Option)\
+            .filter(models.Option.id == option["id"]).first()
+        if not option_db:
+            option_db = models.Option(**option)
+            db.add(option_db)
+    db.commit()
+    rooms = files.json_loader("app/database/init_data/rooms.json")
+    for room in rooms:
+        room_db = db.query(models.Room).filter_by(id=room["id"]).first()
+        if not room_db:
+            room_data = schemas.RoomData(**room["room_data"])
+            options = room["options"]
+            _ = create_room(db=db, room_data=room_data,
+                            options=options, id=room["id"])
     return
 # endregion
