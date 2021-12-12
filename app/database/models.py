@@ -1,4 +1,5 @@
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 from .database import DataBase
 
@@ -26,6 +27,8 @@ class Room(DataBase):
     finish = Column(Integer, nullable=False)
     image_id = Column(Integer, nullable=True)
 
+    options = relationship("Option", secondary="room_option")
+
 
 class Reservation(DataBase):
     __tablename__ = "reservation"
@@ -40,6 +43,8 @@ class Reservation(DataBase):
     first_name = Column(String(25), nullable=True)
     second_name = Column(String(25), nullable=True)
     phone_number = Column(String(12), nullable=True)
+
+    options = relationship("Option", secondary="reservation_option")
 
 
 class Option(DataBase):

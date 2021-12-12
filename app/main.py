@@ -13,7 +13,7 @@ from app.utils import password as passwd
 
 settings = get_settings()
 
-app = FastAPI(root_path=settings.root_path)
+app = FastAPI(root_path=settings.root_path, title="Anticafe-Backend")
 
 # include all routers
 plugins = [f[:-3] for f in resources.contents("app.routers")
