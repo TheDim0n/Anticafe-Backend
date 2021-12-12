@@ -9,7 +9,8 @@ from ..utils import auth
 router = APIRouter(prefix="/reservations", tags=["Reservations"])
 
 
-@router.get("/", response_model=List[schemas.Reservation])
+@router.get("/", response_model=List[schemas.Reservation],
+            summary="Read all reservations for current user")
 async def read_reservations(
     current_user=Depends(auth.get_current_user),
     db=Depends(get_db)
@@ -20,7 +21,7 @@ async def read_reservations(
     return crud.get_reservations(db=db, user_id=user_id)
 
 
-@router.delete("/{id}/", status_code=204)
+@router.delete("/{id}/", status_code=204, summary="Delete reservation by id")
 async def remove_reservation(
     id: int,
     db=Depends(get_db)

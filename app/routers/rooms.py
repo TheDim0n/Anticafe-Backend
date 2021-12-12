@@ -43,7 +43,7 @@ async def update_room_data(
 
 
 @router.post("/{id}/options/", status_code=201,
-             summary="Add options from room")
+             summary="Add options for room")
 async def add_room_options(
     id: int,
     options: List[int],
@@ -66,7 +66,9 @@ async def remove_room_options(
     return Response(status_code=204)
 
 
-@router.get("/{id}/reservations/", response_model=List[schemas.Reservation])
+@router.get("/{id}/reservations/", response_model=List[schemas.Reservation],
+            summary="Read all reservations \
+                     (for the period if query was specified)")
 async def read_room_reservations(
     id: int,
     start: date = None,
@@ -79,7 +81,8 @@ async def read_room_reservations(
                                          start=start, finish=finish)
 
 
-@router.post("/{id}/reservations/", status_code=201)
+@router.post("/{id}/reservations/", status_code=201,
+             summary="Create new reservation for room")
 async def create_room_reservation(
     id: int,
     reservation: schemas.ReservationCreate,

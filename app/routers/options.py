@@ -9,12 +9,13 @@ from ..utils import auth
 router = APIRouter(prefix="/options", tags=["Options"])
 
 
-@router.get("/", response_model=List[schemas.Option])
+@router.get("/", response_model=List[schemas.Option],
+            summary="Read all options")
 async def read_options(db=Depends(get_db)):
     return crud.read_options(db=db)
 
 
-@router.post("/", status_code=201)
+@router.post("/", status_code=201, summary="Create new option")
 async def create_option(
     option_data: schemas.OptionData,
     current_user=Depends(auth.get_current_admin),
