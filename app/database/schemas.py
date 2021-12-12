@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional, List
 
@@ -53,11 +54,36 @@ class RoomData(BaseModel):
     start: int
     finish: int
     image_id: Optional[int]
-    options: Optional[List[Option]]
 
 
 class Room(RoomData):
     id: int
+    options: Optional[List[Option]]
+
+    class Config:
+        orm_mode = True
+# endregion
+
+
+# region Reservation
+class ReservationCreate(BaseModel):
+    cost: int
+    start: datetime
+    finish: datetime
+    user_id: int = None
+    email: str
+    first_name: str = ''
+    second_name: str = ''
+    phone_number: str = ''
+
+
+class ReservationData(ReservationCreate):
+    room_id: int
+
+
+class Reservation(ReservationData):
+    id: int
+    options: List[Option]
 
     class Config:
         orm_mode = True

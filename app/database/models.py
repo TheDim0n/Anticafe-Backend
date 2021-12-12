@@ -44,6 +44,8 @@ class Reservation(DataBase):
     second_name = Column(String(25), nullable=True)
     phone_number = Column(String(12), nullable=True)
 
+    options = relationship("Option", secondary="reservation_option")
+
 
 class Option(DataBase):
     __tablename__ = "option"
