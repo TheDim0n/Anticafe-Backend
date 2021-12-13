@@ -42,6 +42,8 @@ async def update_yser_data(
     current_user=Depends(auth.get_current_user),
     db: Session = Depends(get_db)
 ):
+    if user_data.password:
+        user_data.password = passwd.hash(user_data.password)
     crud.update_user_bu_id(db=db, id=current_user.id, user_data=user_data)
     return Response(status_code=204)
 
