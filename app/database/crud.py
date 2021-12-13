@@ -105,6 +105,9 @@ def get_reservations_by_room(db: Session, id: int, start=None, finish=None):
 
 
 def remove_reservation_by_id(db: Session, id: int):
+    _ = db.query(models.ReservationOption).filter_by(reservation_id=id)\
+        .delete()
+    db.commit()
     _ = db.query(models.Reservation).filter(models.Reservation.id == id).\
         delete()
     db.commit()
