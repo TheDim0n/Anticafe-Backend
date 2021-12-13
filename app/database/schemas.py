@@ -17,7 +17,7 @@ class UserUpdate(BaseModel):
 
 
 class UserRegister(UserBase):
-    pass
+    password: str
 
 
 class UserData(UserBase, UserUpdate):
