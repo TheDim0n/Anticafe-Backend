@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, SecretStr
 from typing import Optional, List
 
 
@@ -10,22 +10,22 @@ class UserBase(BaseModel):
 
 
 class UserUpdate(BaseModel):
+    password: Optional[str]
     first_name: Optional[str]
     second_name: Optional[str]
     phone_number: Optional[str]
 
 
 class UserRegister(UserBase):
-    password: str
+    pass
 
 
 class UserData(UserBase, UserUpdate):
-    pass
+    password: SecretStr
 
 
 class User(UserData):
     id: int
-    password: str
 
     class Config:
         orm_mode = True
@@ -94,4 +94,14 @@ class Reservation(ReservationData):
 class Token(BaseModel):
     access_token: str
     token_type: str
+# endregion
+
+
+# region Info
+class Info(BaseModel):
+    title: str = ''
+    description: str = ''
+
+    class Config:
+        orm_mode = True
 # endregion

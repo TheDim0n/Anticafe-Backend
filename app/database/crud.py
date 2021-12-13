@@ -126,6 +126,18 @@ def create_resevation_for_room(db: Session,
 # endregion
 
 
+# region Info
+def read_project_info(db: Session):
+    return db.query(models.Info).first()
+
+
+def update_project_info(db: Session, info: schemas.Info):
+    _ = db.query(models.Info).update(info.dict())
+    db.commit()
+    return
+# endregion
+
+
 # region InitData
 def load_init_data(db: Session):
     options = files.json_loader("app/database/init_data/options.json")
@@ -136,6 +148,7 @@ def load_init_data(db: Session):
             option_db = models.Option(**option)
             db.add(option_db)
     db.commit()
+
     rooms = files.json_loader("app/database/init_data/rooms.json")
     for room in rooms:
         room_db = db.query(models.Room).filter_by(id=room["id"]).first()
@@ -144,5 +157,16 @@ def load_init_data(db: Session):
             options = room["options"]
             _ = create_room(db=db, room_data=room_data,
                             options=options, id=room["id"])
+
+    info = files.json_loader("app/database/init_data/info.json")
+    info_db = read_project_info(db=db)
+    if info_db:
+        update_project_info(db=db, info=schemas.Info(**info))
+    else:
+        info_db = models.Info(**info)
+        db.add(info_db)
+        db.commit()
+        db.refresh(info_db)
+
     return
 # endregion

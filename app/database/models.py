@@ -68,3 +68,11 @@ class ReservationOption(DataBase):
     reservation_id = Column(Integer,
                             ForeignKey("reservation.id"), primary_key=True)
     option_id = Column(Integer, ForeignKey("option.id"), primary_key=True)
+
+
+class Info(DataBase):
+    __tablename__ = "info"
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String, nullable=True)
+    description = Column(String, nullable=True)
