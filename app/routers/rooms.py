@@ -87,10 +87,12 @@ async def create_room_reservation(
     id: int,
     reservation: schemas.ReservationCreate,
     options: List[int] = Body([]),
-    current_user=Depends(auth.get_current_user),
+    current_user=Depends(auth.get_current_user_not_req),
     db: Session = Depends(get_db)
 ):
-    if not current_user.is_admin:
+    if not current_user:
+        reservation.user_id = None
+    elif not current_user.is_admin:
         reservation.user_id = current_user.id
     reservation_data = schemas.ReservationData(room_id=id,
                                                **reservation.dict())
