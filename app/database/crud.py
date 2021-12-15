@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from sqlalchemy import func as sql_func
 from sqlalchemy.orm import Session
 from typing import List
@@ -174,4 +176,39 @@ def load_init_data(db: Session):
         db.refresh(info_db)
 
     return
+# endregion
+
+
+# region Statistic
+def get_statistics(db: Session):
+    today = datetime.now().replace(
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0
+    )
+    
+    total_reservations = sql_func.count(models.Reservation.id)\
+        .label("total_reservations")
+    total_cost = sql_func.sum(models.Reservation.cost).label("total_cost")
+    total_hours = sql_func.sum(
+        (models.Reservation.finish - models.Reservation.start)
+    ).label("total_hours")
+    
+    query = db.query(
+        models.Reservation.room_id,
+        models.Room.name,
+        total_reservations,
+        total_cost,
+        total_hours
+    ).join(models.Room).filter(
+        models.Reservation.start >= today - timedelta(days=30),
+        models.Reservation.finish < today,
+    ).group_by(models.Room.name, models.Reservation.room_id).order_by(
+        total_reservations.desc(),
+        total_cost.desc(),
+        total_hours.desc(),
+    )
+    header = ["room_id", "name", "total_reservations", "total_cost", "total_hours"]
+    return query.all(), header
 # endregion
