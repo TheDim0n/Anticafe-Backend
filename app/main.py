@@ -19,7 +19,7 @@ app = FastAPI(root_path=settings.root_path, title="Anticafe-Backend")
 # include all routers
 plugins = [f[:-3] for f in resources.contents("app.routers")
            if f.endswith(".py") and f[0] != "_"]
-for plugin in plugins:
+for plugin in sorted(plugins):
     router = importlib.import_module(f"app.routers.{plugin}")
     app.include_router(router.router)
 
