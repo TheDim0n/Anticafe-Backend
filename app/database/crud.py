@@ -63,8 +63,10 @@ def add_room_options(db: Session, id: int, options: List[int]):
 
 
 def remove_room_options(db: Session, id: int, options: List[int]):
-    _ = db.query(models.RoomOption).filter(models.RoomOption.room_id == id)\
-        .delete()
+    _ = db.query(models.RoomOption).filter(
+        models.RoomOption.room_id == id,
+        models.RoomOption.option_id.in_(options)
+    ).delete()
     db.commit()
     return
 # endregion
