@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Header
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
@@ -74,4 +74,30 @@ def get_current_admin(
     user_db = get_current_user(token, db)
     if not user_db.is_admin:
         raise credentials_exception
+    return user_db
+
+
+def get_current_user_not_req(
+    token: str = Header(''),
+    db: Session = Depends(get_db)
+):
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(
+            token,
+            settings.secret_key,
+            algorithms=[ALGORITHM]
+        )
+        username: str = payload.get("sub")
+        if username is None:
+            return None
+    except Exception:
+        return None
+    user_db = crud.get_user_by_login(db=db, login=username)
+    if user_db is None:
+        return None
     return user_db
