@@ -40,7 +40,7 @@ async def load_initial_data(
 
 @router.get("/statistics/")
 async def get_statistics(
-    # current_user=Depends(auth.get_current_admin),
+    current_user=Depends(auth.get_current_admin),
     db: Session = Depends(get_db)
 ):
     data, header = crud.get_statistics(db=db)
