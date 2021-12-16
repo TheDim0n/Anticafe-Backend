@@ -43,10 +43,12 @@ async def get_statistics(
     current_user=Depends(auth.get_current_admin),
     db: Session = Depends(get_db)
 ):
-    data, header = crud.get_statistics(db=db)
+    data, additional_rows, header = crud.get_statistics(db=db)
+
     if not data:
         raise HTTPException(status_code=404, detail="Reservations not found")
-    outcsv = files.data_to_csv(header=header, data=data)
+    outcsv = files.data_to_csv(header=header, data=data,
+                               additional_rows=additional_rows)
     return FileResponse(
         outcsv.name, media_type="text/csv", filename="Statistics.csv",
         background=BackgroundTask(files.delete_file, filepath=outcsv.name)

@@ -4,12 +4,14 @@ import json
 import tempfile
 
 
-def data_to_csv(header, data):
+def data_to_csv(header, data, additional_rows=[]):
     with tempfile.NamedTemporaryFile(mode="w", delete=False,
                                      newline='', encoding="utf-8") as f:
         outcsv = csv.writer(f, delimiter=',')
         outcsv.writerow(header)
         for row in data:
+            outcsv.writerow([getattr(row, c) for c in header])
+        for row in additional_rows:
             outcsv.writerow([getattr(row, c) for c in header])
     return f
 

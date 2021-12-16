@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from sqlalchemy import func as sql_func
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import expression as sql_exp
 from typing import List
 
 from . import models, schemas
@@ -187,14 +188,14 @@ def get_statistics(db: Session):
         second=0,
         microsecond=0
     )
-    
+
     total_reservations = sql_func.count(models.Reservation.id)\
         .label("total_reservations")
     total_cost = sql_func.sum(models.Reservation.cost).label("total_cost")
     total_hours = sql_func.sum(
         (models.Reservation.finish - models.Reservation.start)
     ).label("total_hours")
-    
+
     query = db.query(
         models.Reservation.room_id,
         models.Room.name,
@@ -209,6 +210,16 @@ def get_statistics(db: Session):
         total_cost.desc(),
         total_hours.desc(),
     )
-    header = ["room_id", "name", "total_reservations", "total_cost", "total_hours"]
-    return query.all(), header
+
+    data_id = [row["room_id"] for row in query.all()]
+    additional_query = db.query(
+        models.Room.id.label("room_id"),
+        models.Room.name,
+        sql_exp.literal(0).label("total_reservations"),
+        sql_exp.literal(0).label("total_cost"),
+        sql_exp.literal(timedelta(hours=0)).label("total_hours"),
+    ).filter(models.Room.id.not_in(data_id))
+    header = ["room_id", "name", "total_reservations", "total_cost",
+              "total_hours"]
+    return query.all(), additional_query.all(), header
 # endregion
