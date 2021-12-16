@@ -44,11 +44,6 @@ async def get_statistics(
     db: Session = Depends(get_db)
 ):
     data, additional_rows, header = crud.get_statistics(db=db)
-    # data_id = set([row["room_id"] for row in data])
-    # rooms_db = crud.read_rooms(db=db)
-    # rooms_id = set([room.id for room in rooms_db])
-    # additional_rows = list(rooms_id.difference(data_id))
-    # print(data)
 
     if not data:
         raise HTTPException(status_code=404, detail="Reservations not found")
